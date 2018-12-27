@@ -31,7 +31,6 @@ import ast
 import json
 import os
 import datetime
-import paho.mqtt.client as paho
 
 
 class FactoryControlApp:
@@ -101,9 +100,6 @@ class FactoryControlApp:
             ret = self.modbus_client.connect()
             self.log.info("Modbus connect on %s:%s returned %s" % (
                 self.ip, self.port, ret))
-
-            self.client = paho.Client("client-001")
-            self.client.connect(self.config["mqtt_broker"])
 
             streamSubLib = StreamSubLib()
             streamSubLib.init()
