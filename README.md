@@ -28,7 +28,7 @@ Changes needs to be done in few files. They are as follows:
     * "io_module_ip" : "<ip_address given in the pre-requisite step#2.b>"
     * "mqtt_broker"  : "<ip_address given in the pre-requisite step#2.c>"
 2. docker_setup/config/telegraf.conf
-    * Under "inputs.mqtt", <br>
+    * Under "inputs.mqtt_consumer", <br>
         i.  servers = ["tcp://<ip_address given in the pre-requisite step#2.c>:1883"]<br>
         ii. topics = ["**Advantech/<ADAM_MODULE_ID>/data**",] <br>
 
