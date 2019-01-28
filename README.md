@@ -20,7 +20,7 @@ FactoryControlApp uses StreamSubLib to subscribe to influxdb and gets data from 
     a. On the left-hand side pannel, right click on `Ethernet` and select `Search Device`<br>
     b. io_module will be detected (ADAM-6050) under Ethernet, click on it and go to `Network` tab and set the `<ip_address>` to the      
        io_module.<br>
-    c. go to `Cloud -> MQTT` tab and set the mqtt broker host (this could be ip-address of any host system where our ETA is running)
+    c. go to `Cloud -> MQTT` tab and set the mqtt broker host (this could be ip-address of any host system where our IEI is running)
 
 Changes needs to be done in few files. They are as follows:
 
