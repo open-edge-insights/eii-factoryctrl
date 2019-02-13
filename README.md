@@ -20,7 +20,7 @@ FactoryControlApp uses StreamSubLib to subscribe to influxdb and gets data from 
     a. On the left-hand side pannel, right click on `Ethernet` and select `Search Device`<br>
     b. io_module will be detected (ADAM-6050) under Ethernet, click on it and go to `Network` tab and set the `<ip_address>` to the      
        io_module.<br>
-    c. go to `Cloud -> MQTT` tab and set the mqtt broker host (this could be ip-address of any host system where our IEI is running)
+    c. go to `Cloud -> MQTT` tab and set the mqtt broker host (this could be ip-address of any system where an MQTT broker (mosquitto) is running)
 
 Changes needs to be done in few files. They are as follows:
 
@@ -29,7 +29,7 @@ Changes needs to be done in few files. They are as follows:
     * "mqtt_broker"  : "<ip_address given in the pre-requisite step#2.c>"
 2. docker_setup/config/telegraf.conf
     * Under "inputs.mqtt_consumer", <br>
-        i.  servers = ["tcp://<ip_address given in the pre-requisite step#2.c>:1883"]<br>
+        i.  servers = ["tcp://<ip_address given in the pre-requisite step#2.c>"]<br>
         ii. topics = ["**Advantech/<ADAM_MODULE_ID>/data**",] <br>
 
 **NOTE**: For the circuit connections of the lab setup, refer 4.5 (4.5.2 IO module) in the document **FactoryControlApp/HW_Configuration.pdf**
