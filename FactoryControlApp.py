@@ -104,7 +104,7 @@ class FactoryControlApp:
             streamSubLib = StreamSubLib()
             streamSubLib.init()
 
-            streamSubLib.Subscribe('classifier_results', self.light_ctrl_cb)
+            streamSubLib.Subscribe('stream1_results', self.light_ctrl_cb)
             streamSubLib.Subscribe('module_io', self.onsubScribeIoModuleData)
         except Exception as e:
             self.log.info("Exception Occured" + str(e))
