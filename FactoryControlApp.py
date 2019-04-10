@@ -143,6 +143,7 @@ if __name__ == "__main__":
 
     log = configure_logging(args.log.upper(), logFileName,
                             args.log_dir, __name__)
+    log.info("=============== STARTING factoryctrl_app ===============")
     try:
         factoryCtrlApp = FactoryControlApp(args, log)
         factoryCtrlApp.main()
