@@ -76,21 +76,22 @@ class FactoryControlApp:
                     # 1 is on and 0 is off
                     try:
                         self.modbus_client.write_coil(
-                            self.config["bit_register"], 1)
+                            self.config["green_bit_register"], 0)
+                        self.modbus_client.write_coil(
+                            self.config["red_bit_register"], 1)
                         self.log.info("AlarmLight Triggered")
                     except Exception as e:
                         self.log.error("Exception: %s", str(e))
-
-    def onsubScribeIoModuleData(self, io_module_data):
-        ''' Controls the Reset Button, i.e., once the reset
-        button is clicked, alarm light turns off
-        Argement: Data of io_module from influxdb
-        Output: Turns off the Alarm Light
-        '''
-        io_module_data = json.loads(io_module_data)
-        if (io_module_data[self.config["reset_button_in"]] == "false"):
-            self.log.info("Reset Clicked")
-            self.modbus_client.write_coil(self.config["bit_register"], 0)
+                else:
+                    self.modbus_client.write_coil(
+                        self.config["red_bit_register"], 0)
+                    self.modbus_client.write_coil(
+                        self.config["green_bit_register"], 1)
+            else:
+                self.modbus_client.write_coil(
+                    self.config["red_bit_register"], 0)
+                self.modbus_client.write_coil(
+                    self.config["green_bit_register"], 1)
 
     def main(self):
         ''' Subscription to the required Streams
@@ -103,9 +104,7 @@ class FactoryControlApp:
 
             streamSubLib = StreamSubLib()
             streamSubLib.init()
-
             streamSubLib.Subscribe('stream1_results', self.light_ctrl_cb)
-            streamSubLib.Subscribe('module_io', self.onsubScribeIoModuleData)
         except Exception as e:
             self.log.info("Exception Occured" + str(e))
 
