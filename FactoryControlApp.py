@@ -25,6 +25,7 @@ SOFTWARE.
 from pymodbus.client.sync import ModbusTcpClient as ModbusClient
 from StreamSubLib.StreamSubLib import StreamSubLib
 from Util.log import configure_logging, LOG_LEVELS
+from distutils.util import strtobool
 import logging
 import argparse
 import ast
@@ -42,6 +43,7 @@ class FactoryControlApp:
         to the io_module'''
         self.args = args
         self.log = log
+        self.dev_mode = bool(strtobool(os.environ['DEV_MODE']))
 
         with open(args.config, 'r') as f:
             self.config = json.load(f)
@@ -103,7 +105,11 @@ class FactoryControlApp:
                 self.ip, self.port, ret))
 
             streamSubLib = StreamSubLib()
-            streamSubLib.init()
+            if self.dev_mode:
+                streamSubLib.init(dev_mode=self.dev_mode)
+            else:
+                streamSubLib.init()
+
             streamSubLib.Subscribe('stream1_results', self.light_ctrl_cb)
         except Exception as e:
             self.log.info("Exception Occured" + str(e))
