@@ -100,8 +100,7 @@ class FactoryControlApp:
         in influxdb'''
 
         try:
-            self.log.info("Modbus connecting on %s:%s" %(
-                self.ip, self.port))
+            self.log.info("Modbus connecting on %s:%s" % (self.ip, self.port))
             ret = self.modbus_client.connect()
 
             if not ret:
