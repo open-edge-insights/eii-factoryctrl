@@ -101,8 +101,12 @@ class FactoryControlApp:
 
         try:
             ret = self.modbus_client.connect()
-            self.log.info("Modbus connect on %s:%s returned %s" % (
+            self.log.info("Modbus connecting on %s:%s returned %s" % (
                 self.ip, self.port, ret))
+
+            if not ret:
+                self.log.error("Modbus Connection failed")
+                exit(-1)
 
             streamSubLib = StreamSubLib()
             if self.dev_mode:
@@ -113,6 +117,7 @@ class FactoryControlApp:
             streamSubLib.Subscribe('stream1_results', self.light_ctrl_cb)
         except Exception as e:
             self.log.info("Exception Occured" + str(e))
+            exit(-1)
 
 
 def parse_args():
