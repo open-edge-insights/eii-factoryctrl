@@ -83,7 +83,7 @@ class FactoryControlApp:
                             self.config["red_bit_register"], 1)
                         self.log.info("AlarmLight Triggered")
                     except Exception as e:
-                        self.log.error("Exception: %s", str(e))
+                        self.log.error(e, exc_info=True)
                 else:
                     self.modbus_client.write_coil(
                         self.config["red_bit_register"], 0)
@@ -100,9 +100,9 @@ class FactoryControlApp:
         in influxdb'''
 
         try:
+            self.log.info("Modbus connecting on %s:%s" %(
+                self.ip, self.port))
             ret = self.modbus_client.connect()
-            self.log.info("Modbus connecting on %s:%s returned %s" % (
-                self.ip, self.port, ret))
 
             if not ret:
                 self.log.error("Modbus Connection failed")
@@ -116,7 +116,7 @@ class FactoryControlApp:
 
             streamSubLib.Subscribe('stream1_results', self.light_ctrl_cb)
         except Exception as e:
-            self.log.info("Exception Occured" + str(e))
+            self.log.error(e, exc_info=True)
             exit(-1)
 
 
