@@ -6,9 +6,7 @@ LABEL description="FactoryControlApp image"
 # Installing dependent python modules
 ADD FactoryControlApp/requirements.txt .
 RUN pip3.6 install -r requirements.txt && \
-    rm -rf requirements.txt 
-
-RUN apk add --no-cache libstdc++ 
+    rm -rf requirements.txt
 
 # Creating dir for ca_certificate
 RUN mkdir -p /etc/ssl/ca
