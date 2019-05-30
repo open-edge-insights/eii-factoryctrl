@@ -2,10 +2,9 @@
 
 This module controls the Alarm Light and Reset button. IO_Module(Adam controller) publishes the data to mqtt with topic "Advantech/<ADAM_MODULE_ID>/data" and telegraf which is subscribed to same topic receives the data from io_module(Adam controller) and writes module_io measurement in influxdb.
 
-FactoryControlApp uses StreamSubLib to subscribe to influxdb and gets data from **module_io** and **classifier_results**.
+FactoryControlApp uses StreamSubLib to subscribe to influxdb on the required **output_stream** which should be given in FactoryControlApp/config.json.
 
-1. **module_io** data is used to control reset button.
-2. **classifier_results** data is used to control alarm light.
+**output_stream** data is used to control alarm light.
 
 # Running FactoryControlApp
 
@@ -18,18 +17,12 @@ FactoryControlApp uses StreamSubLib to subscribe to influxdb and gets data from 
 
 2. Install and open the downloaded app and follow the below instructions:<br>
     a. On the left-hand side pannel, right click on `Ethernet` and select `Search Device`<br>
-    b. io_module will be detected (ADAM-6050) under Ethernet, click on it and go to `Network` tab and set the `<ip_address>` to the      
-       io_module.<br>
-    c. go to `Cloud -> MQTT` tab and set the mqtt broker host (this could be ip-address of any system where an MQTT broker (mosquitto) is running)
+    b. io_module will be detected (ADAM-6050) under Ethernet, click on it and go to `Network` tab and set the `<ip_address>` to the io_module.<br>
 
-Changes needs to be done in few files. They are as follows:
+Changes needs to be done in FactoryControlApp/config.json. They are as follows:
 
 1. FactoryControlApp/config.json
+    * "output_stream" : "stream1_results" or "cam_serial1_results" or "cam_serial1_results" and so on.
     * "io_module_ip" : "<ip_address given in the pre-requisite step#2.b>"
-    * "mqtt_broker"  : "<ip_address given in the pre-requisite step#2.c>"
-2. docker_setup/config/telegraf.conf
-    * Under "inputs.mqtt_consumer", <br>
-        i.  servers = ["tcp://<ip_address given in the pre-requisite step#2.c>"]<br>
-        ii. topics = ["**Advantech/<ADAM_MODULE_ID>/data**",] <br>
 
 **NOTE**: For the circuit connections of the lab setup, refer 4.5 (4.5.2 IO module) in the document **FactoryControlApp/HW_Configuration.pdf**

@@ -35,8 +35,7 @@ import datetime
 
 
 class FactoryControlApp:
-    '''This Class controls the robotic_arm, PanelLight,
-    AlarmLight and ResetButton'''
+    '''This Class controls the AlarmLight'''
 
     def __init__(self, args, log):
         ''' Reads the config file and connects
@@ -56,7 +55,7 @@ class FactoryControlApp:
     def light_ctrl_cb(self, classified_result_data):
         ''' Controls the Alarm Light, i.e., alarm light turns on
         if there are any defects in the classified results
-        Argument: classifier_results from influxdb
+        Argument: classified_result_data from influxdb
         Output: Turns on the Alarm Light
         '''
 
@@ -113,7 +112,8 @@ class FactoryControlApp:
             else:
                 streamSubLib.init()
 
-            streamSubLib.Subscribe('stream1_results', self.light_ctrl_cb)
+            streamSubLib.Subscribe(self.config["output_stream"],
+                                   self.light_ctrl_cb)
         except Exception as e:
             self.log.error(e, exc_info=True)
             exit(-1)
