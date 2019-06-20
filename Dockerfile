@@ -11,6 +11,7 @@ RUN mkdir -p /etc/ssl/streamsublib && \
     chown -R ${IEI_UID} /etc/ssl/
 
 # Installing dependent python modules
+COPY Util/ ./Util/
 COPY FactoryControlApp/requirements.txt .
 RUN pip3.6 install -r requirements.txt && \
     rm -rf requirements.txt
@@ -21,7 +22,6 @@ RUN pip3.6 install -r requirements.txt && \
 COPY FactoryControlApp/ .
 COPY StreamSubLib/StreamSubLib.py StreamSubLib/StreamSubLib.py
 COPY DataAgent/da_grpc ./DataAgent/da_grpc
-
 
 ENTRYPOINT [ "python3.6", "FactoryControlApp.py", "--config", "config.json", "--log-dir", "/IEI/factoryctrl_app_logs"]
 CMD ["--log", "DEBUG"]
