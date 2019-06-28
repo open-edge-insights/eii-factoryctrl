@@ -6,7 +6,7 @@ dist_libs/
 docker_setup/
 kapacitor/
 licenses/
-StreamManager/
+InfluxDBConnector/
 Telegraf/
 test_videos/
 VideoIngestion/
