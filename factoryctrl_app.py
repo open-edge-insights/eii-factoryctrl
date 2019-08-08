@@ -1,30 +1,25 @@
+# Copyright (c) 2019 Intel Corporation.
 
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
 
-"""
-Copyright (c) 2018 Intel Corporation.
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-"""
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 
 from pymodbus.client.sync import ModbusTcpClient as ModbusClient
-from StreamSubLib.StreamSubLib import StreamSubLib
-from Util.log import configure_logging, LOG_LEVELS
+from libs.log import configure_logging, LOG_LEVELS
 from distutils.util import strtobool
 import logging
 import argparse
@@ -32,6 +27,12 @@ import ast
 import json
 import os
 import datetime
+import eis.msgbus as mb
+from libs.ConfigManager import ConfigManager
+from libs.common.py.util import Util
+import queue
+
+CONFIG_KEY_PATH = "/config"
 
 
 class FactoryControlApp:
@@ -42,31 +43,37 @@ class FactoryControlApp:
         to the io_module'''
         self.args = args
         self.log = log
-        self.dev_mode = bool(strtobool(os.environ['DEV_MODE']))
-
-        with open(args.config, 'r') as f:
-            self.config = json.load(f)
-
+        self.dev_mode = bool(strtobool(os.environ["DEV_MODE"]))
+        conf = {
+            "certFile": "",
+            "keyFile": "",
+            "trustFile": ""
+        }
+        self.app_name = os.environ.get("AppName")
+        cfg_mgr = ConfigManager()
+        self.config_client = cfg_mgr.get_config_client("etcd", conf)
+        cfg = self.config_client.GetConfig("/{0}{1}"
+                                           .format(self.app_name,
+                                                   CONFIG_KEY_PATH))
+        self.config = json.loads(cfg)
         self.ip = self.config["io_module_ip"]
         self.port = self.config["io_module_port"]
         self.modbus_client = ModbusClient(
             self.ip, self.port, timeout=1, retry_on_empty=True)
 
-    def light_ctrl_cb(self, classified_result_data):
+    def light_ctrl_cb(self, metadata):
         ''' Controls the Alarm Light, i.e., alarm light turns on
         if there are any defects in the classified results
-        Argument: classified_result_data from influxdb
+        Argument: metadata from influxdb
         Output: Turns on the Alarm Light
         '''
-
-        classified_result_data = json.loads(classified_result_data)
         defect_types = []
-        if 'defects' in classified_result_data:
-            if classified_result_data['defects']:
-                classified_result_data['defects'] = ast.literal_eval(
-                    classified_result_data['defects'])
+        if 'defects' in metadata:
+            if metadata['defects']:
+                metadata['defects'] = ast.literal_eval(
+                    metadata['defects'])
 
-                for i in classified_result_data['defects']:
+                for i in metadata['defects']:
                     defect_types.append(i['type'])
 
                 if (1 in defect_types) or (2 in defect_types) or \
@@ -95,38 +102,48 @@ class FactoryControlApp:
                     self.config["green_bit_register"], 1)
 
     def main(self):
-        ''' Subscription to the required Streams
-        in influxdb'''
-
+        ''' FactoryControl app to subscribe to topics published by
+            VideoAnalytics and control the red/green lights based on the
+            classified metadata
+        '''
+        subscriber = None
         try:
             self.log.info("Modbus connecting on %s:%s" % (self.ip, self.port))
             ret = self.modbus_client.connect()
-
             if not ret:
                 self.log.error("Modbus Connection failed")
                 exit(-1)
+            self.log.info("Modbus connected")
+            topics = os.environ.get("SubTopics").split(",")
+            if len(topics) > 1:
+                raise Exception("Multiple SubTopics are not supported")
 
-            streamSubLib = StreamSubLib()
-            if self.dev_mode:
-                streamSubLib.init(dev_mode=self.dev_mode)
-            else:
-                streamSubLib.init()
-
-            streamSubLib.Subscribe(self.config["output_stream"],
-                                   self.light_ctrl_cb)
+            self.log.info("Subscribing on topic: {}".format(topics[0]))
+            publisher, topic = topics[0].split("/")
+            msgbus_cfg = Util.get_messagebus_config(topic, "sub",
+                                                    publisher,
+                                                    self.config_client,
+                                                    self.dev_mode)
+            msgbus = mb.MsgbusContext(msgbus_cfg)
+            subscriber = msgbus.new_subscriber(topic)
+            while True:
+                metadata, _ = subscriber.recv()
+                if metadata is None:
+                    raise Exception("Received None as metadata")
+                self.light_ctrl_cb(metadata)
+        except KeyboardInterrupt:
+            self.log.error(' keyboard interrupt occurred Quitting...')
         except Exception as e:
-            self.log.error(e, exc_info=True)
-            exit(-1)
+            self.log.exception(e)
+        finally:
+            if subscriber is not None:
+                subscriber.close()
 
 
 def parse_args():
     '''Parse command line arguments
     '''
-
     parser = argparse.ArgumentParser()
-    parser.add_argument('--config', default='config.json',
-                        help='JSON configuration file')
-
     parser.add_argument('--log', dest='log', choices=LOG_LEVELS.keys(),
                         default='DEBUG', help='Logging level (df: DEFAULT)')
 
@@ -157,4 +174,4 @@ if __name__ == "__main__":
         factoryCtrlApp = FactoryControlApp(args, log)
         factoryCtrlApp.main()
     except Exception as e:
-        log.error("Exception: %s", str(e))
+        log.exception(e)
