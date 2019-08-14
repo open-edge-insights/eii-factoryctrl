@@ -150,8 +150,6 @@ def parse_args():
     '''Parse command line arguments
     '''
     parser = argparse.ArgumentParser()
-    parser.add_argument('--log', dest='log', choices=LOG_LEVELS.keys(),
-                        default='DEBUG', help='Logging level (df: DEFAULT)')
 
     parser.add_argument('--log-name', dest='log_name',
                         default='factoryctrl_app_logs', help='Logfile name')
@@ -168,12 +166,28 @@ if __name__ == "__main__":
     if not os.path.exists(args.log_dir):
         os.mkdir(args.log_dir)
 
+    dev_mode = bool(strtobool(os.environ["DEV_MODE"]))
+    # Initializing etcd to set GlobalEnv
+    conf = {
+        "certFile": "",
+        "keyFile": "",
+        "trustFile": ""
+    }
+    if not dev_mode:
+        conf = {
+            "certFile": "/run/secrets/etcd_FactoryControlApp_cert",
+            "keyFile": "/run/secrets/etcd_FactoryControlApp_key",
+            "trustFile": "/run/secrets/ca_etcd"
+        }
+    cfg_mgr = ConfigManager()
+    _ = cfg_mgr.get_config_client("etcd", conf)
+
     currentDateTime = str(datetime.datetime.now())
     listDateTime = currentDateTime.split(" ")
     currentDateTime = "_".join(listDateTime)
     logFileName = 'factoryCtrlApp_' + currentDateTime + '.log'
 
-    log = configure_logging(args.log.upper(), logFileName,
+    log = configure_logging(os.environ['PY_LOG_LEVEL'].upper(), logFileName,
                             args.log_dir, __name__)
     log.info("=============== STARTING factoryctrl_app ===============")
     try:
