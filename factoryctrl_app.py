@@ -38,11 +38,16 @@ CONFIG_KEY_PATH = "/config"
 class FactoryControlApp:
     '''This Class controls the AlarmLight'''
 
-    def __init__(self, args, log):
+    def __init__(self, dev_mode, config_client):
         ''' Reads the config file and connects
-        to the io_module'''
-        self.args = args
-        self.log = log
+        to the io_module
+
+        :param dev_mode: indicates whether it's dev or prod mode
+        :type dev_mode: bool
+        :param config_client: distributed store config client
+        :type config_client: config client object
+        '''
+        self.log = logging.getLogger(__name__)
         self.dev_mode = bool(strtobool(os.environ["DEV_MODE"]))
         conf = {
             "certFile": "",
@@ -68,10 +73,11 @@ class FactoryControlApp:
             self.ip, self.port, timeout=1, retry_on_empty=True)
 
     def light_ctrl_cb(self, metadata):
-        ''' Controls the Alarm Light, i.e., alarm light turns on
+        '''Controls the Alarm Light, i.e., alarm light turns on
         if there are any defects in the classified results
-        Argument: metadata from influxdb
-        Output: Turns on the Alarm Light
+
+        :param metadata:  classified results metadata
+        :type metadata: dict
         '''
         defect_types = []
         if 'defects' in metadata:
@@ -166,8 +172,12 @@ if __name__ == "__main__":
     if not os.path.exists(args.log_dir):
         os.mkdir(args.log_dir)
 
+    currentDateTime = str(datetime.datetime.now())
+    listDateTime = currentDateTime.split(" ")
+    currentDateTime = "_".join(listDateTime)
+    logFileName = 'factoryCtrlApp_' + currentDateTime + '.log'
+
     dev_mode = bool(strtobool(os.environ["DEV_MODE"]))
-    # Initializing etcd to set GlobalEnv
     conf = {
         "certFile": "",
         "keyFile": "",
@@ -180,18 +190,13 @@ if __name__ == "__main__":
             "trustFile": "/run/secrets/ca_etcd"
         }
     cfg_mgr = ConfigManager()
-    _ = cfg_mgr.get_config_client("etcd", conf)
-
-    currentDateTime = str(datetime.datetime.now())
-    listDateTime = currentDateTime.split(" ")
-    currentDateTime = "_".join(listDateTime)
-    logFileName = 'factoryCtrlApp_' + currentDateTime + '.log'
+    config_client = cfg_mgr.get_config_client("etcd", conf)
 
     log = configure_logging(os.environ['PY_LOG_LEVEL'].upper(), logFileName,
                             args.log_dir, __name__)
     log.info("=============== STARTING factoryctrl_app ===============")
     try:
-        factoryCtrlApp = FactoryControlApp(args, log)
+        factoryCtrlApp = FactoryControlApp(dev_mode, config_client)
         factoryCtrlApp.main()
     except Exception as e:
         log.exception(e)
