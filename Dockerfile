@@ -31,10 +31,8 @@ RUN cd ./libs/EISMessageBus && \
     make && \
     make install
 
-ENV LD_LIBRARY_PATH /usr/local/lib
-
 # Adding project depedency modules
-ADD factoryctrl_app.py .
+COPY factoryctrl_app.py .
 
 ENTRYPOINT [ "python3.6", "factoryctrl_app.py" ]
 HEALTHCHECK NONE
