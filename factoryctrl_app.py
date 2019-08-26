@@ -136,6 +136,12 @@ class FactoryControlApp:
                                                     publisher,
                                                     self.config_client,
                                                     self.dev_mode)
+            topic = topic.strip()
+            if not dev_mode:
+                for key in msgbus_cfg[topic]:
+                    if msgbus_cfg[topic][key] is None:
+                        raise ValueError("Invalid Config")
+
             msgbus = mb.MsgbusContext(msgbus_cfg)
             subscriber = msgbus.new_subscriber(topic)
             while True:
