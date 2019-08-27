@@ -160,30 +160,10 @@ class FactoryControlApp:
                 subscriber.close()
 
 
-def parse_args():
-    '''Parse command line arguments
-    '''
-    parser = argparse.ArgumentParser()
-
-    parser.add_argument('--log-name', dest='log_name',
-                        default='factoryctrl_app_logs', help='Logfile name')
-
-    parser.add_argument('--log-dir', dest='log_dir', default='logs',
-                        help='Directory to for log files')
-
-    return parser.parse_args()
-
-
 if __name__ == "__main__":
-    args = parse_args()
-
-    if not os.path.exists(args.log_dir):
-        os.mkdir(args.log_dir)
-
     currentDateTime = str(datetime.datetime.now())
     listDateTime = currentDateTime.split(" ")
     currentDateTime = "_".join(listDateTime)
-    logFileName = 'factoryCtrlApp_' + currentDateTime + '.log'
 
     dev_mode = bool(strtobool(os.environ["DEV_MODE"]))
     conf = {
@@ -200,8 +180,8 @@ if __name__ == "__main__":
     cfg_mgr = ConfigManager()
     config_client = cfg_mgr.get_config_client("etcd", conf)
 
-    log = configure_logging(os.environ['PY_LOG_LEVEL'].upper(), logFileName,
-                            args.log_dir, __name__)
+    log = configure_logging(os.environ['PY_LOG_LEVEL'].upper(),
+                            __name__)
     log.info("=============== STARTING factoryctrl_app ===============")
     try:
         factoryCtrlApp = FactoryControlApp(dev_mode, config_client)

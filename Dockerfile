@@ -13,9 +13,6 @@ COPY requirements.txt .
 RUN pip3.6 install -r requirements.txt && \
     rm -rf requirements.txt
 
-RUN mkdir -p logs && \
-    chown ${EIS_UID}:${EIS_UID} logs
-
 FROM ia_common:$EIS_VERSION as common
 
 FROM pybase
