@@ -19,7 +19,7 @@
 # SOFTWARE.
 
 from pymodbus.client.sync import ModbusTcpClient as ModbusClient
-from libs.log import configure_logging, LOG_LEVELS
+from util.log import configure_logging, LOG_LEVELS
 from distutils.util import strtobool
 import logging
 import argparse
@@ -29,7 +29,8 @@ import os
 import datetime
 import eis.msgbus as mb
 from libs.ConfigManager import ConfigManager
-from libs.common.py.util import Util
+from util.util import Util
+from util.msgbusutil import MsgBusUtil
 import queue
 
 CONFIG_KEY_PATH = "/config"
@@ -132,7 +133,7 @@ class FactoryControlApp:
 
             self.log.info("Subscribing on topic: {}".format(topics[0]))
             publisher, topic = topics[0].split("/")
-            msgbus_cfg = Util.get_messagebus_config(topic, "sub",
+            msgbus_cfg = MsgBusUtil.get_messagebus_config(topic, "sub",
                                                     publisher,
                                                     self.config_client,
                                                     self.dev_mode)

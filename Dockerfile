@@ -18,7 +18,7 @@ FROM ia_common:$EIS_VERSION as common
 FROM pybase
 
 COPY --from=common /libs ${PY_WORK_DIR}/libs
-COPY --from=common /Util ${PY_WORK_DIR}/Util
+COPY --from=common /util ${PY_WORK_DIR}/util
 
 RUN cd ./libs/EISMessageBus && \
     rm -rf build deps && \
@@ -32,4 +32,3 @@ RUN cd ./libs/EISMessageBus && \
 COPY factoryctrl_app.py .
 
 ENTRYPOINT [ "python3.6", "factoryctrl_app.py" ]
-HEALTHCHECK NONE
