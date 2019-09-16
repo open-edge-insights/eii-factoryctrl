@@ -25,7 +25,8 @@ The config about Adamcontroller (IO module) like port, IP address, register bits
 
 ## `Installation`
 
-* Follow [provision/README.md](../docker_setup/provision/README.md) for EIS provisioning
+* Follow [provision/README.md](../README#provision-eis.md) for EIS provisioning
+  if not done already as part of EIS stack setup
 
 * Run FactoryControlApp
 
