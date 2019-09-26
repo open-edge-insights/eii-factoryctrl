@@ -50,18 +50,10 @@ class FactoryControlApp:
         '''
         self.log = logging.getLogger(__name__)
         self.dev_mode = bool(strtobool(os.environ["DEV_MODE"]))
-        conf = {
-            "certFile": "",
-            "keyFile": "",
-            "trustFile": ""
-        }
-        if not self.dev_mode:
-            conf = {
-                "certFile": "/run/secrets/etcd_FactoryControlApp_cert",
-                "keyFile": "/run/secrets/etcd_FactoryControlApp_key",
-                "trustFile": "/run/secrets/ca_etcd"
-            }
+        
         self.app_name = os.environ.get("AppName")
+        conf = Util.get_crypto_dict(self.app_name)
+        
         cfg_mgr = ConfigManager()
         self.config_client = cfg_mgr.get_config_client("etcd", conf)
         cfg = self.config_client.GetConfig("/{0}{1}"
@@ -167,17 +159,10 @@ if __name__ == "__main__":
     currentDateTime = "_".join(listDateTime)
 
     dev_mode = bool(strtobool(os.environ["DEV_MODE"]))
-    conf = {
-        "certFile": "",
-        "keyFile": "",
-        "trustFile": ""
-    }
-    if not dev_mode:
-        conf = {
-            "certFile": "/run/secrets/etcd_FactoryControlApp_cert",
-            "keyFile": "/run/secrets/etcd_FactoryControlApp_key",
-            "trustFile": "/run/secrets/ca_etcd"
-        }
+
+    app_name = os.environ["AppName"] 
+    conf = Util.get_crypto_dict(app_name)
+
     cfg_mgr = ConfigManager()
     config_client = cfg_mgr.get_config_client("etcd", conf)
 
