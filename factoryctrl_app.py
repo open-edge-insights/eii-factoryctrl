@@ -167,7 +167,7 @@ if __name__ == "__main__":
     config_client = cfg_mgr.get_config_client("etcd", conf)
 
     log = configure_logging(os.environ['PY_LOG_LEVEL'].upper(),
-                            __name__)
+                            __name__, dev_mode)
     log.info("=============== STARTING factoryctrl_app ===============")
     try:
         factoryCtrlApp = FactoryControlApp(dev_mode, config_client)
