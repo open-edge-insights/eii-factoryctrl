@@ -75,9 +75,6 @@ class FactoryControlApp:
         defect_types = []
         if 'defects' in metadata:
             if metadata['defects']:
-                metadata['defects'] = ast.literal_eval(
-                    metadata['defects'])
-
                 for i in metadata['defects']:
                     defect_types.append(i['type'])
 
