@@ -50,10 +50,10 @@ class FactoryControlApp:
         '''
         self.log = logging.getLogger(__name__)
         self.dev_mode = bool(strtobool(os.environ["DEV_MODE"]))
-        
+
         self.app_name = os.environ.get("AppName")
         conf = Util.get_crypto_dict(self.app_name)
-        
+
         cfg_mgr = ConfigManager()
         self.config_client = cfg_mgr.get_config_client("etcd", conf)
         cfg = self.config_client.GetConfig("/{0}{1}"
@@ -122,10 +122,8 @@ class FactoryControlApp:
 
             self.log.info("Subscribing on topic: {}".format(topics[0]))
             publisher, topic = topics[0].split("/")
-            msgbus_cfg = MsgBusUtil.get_messagebus_config(topic, "sub",
-                                                    publisher,
-                                                    self.config_client,
-                                                    self.dev_mode)
+            msgbus_cfg = MsgBusUtil.get_messagebus_config(
+                topic, "sub", publisher, self.config_client, self.dev_mode)
             topic = topic.strip()
             mode_address = os.environ[topic + "_cfg"].split(",")
             mode = mode_address[0].strip()
@@ -157,7 +155,7 @@ if __name__ == "__main__":
 
     dev_mode = bool(strtobool(os.environ["DEV_MODE"]))
 
-    app_name = os.environ["AppName"] 
+    app_name = os.environ["AppName"]
     conf = Util.get_crypto_dict(app_name)
 
     cfg_mgr = ConfigManager()
