@@ -34,6 +34,6 @@ The config about Adamcontroller (IO module) like port, IP address, register bits
 
     1. Build and Run VideoIngestion as container
         ```
-        $ cd [repo]/docker_setup
+        $ cd [repo]/build
         $ docker-compose up --build -d
         ```

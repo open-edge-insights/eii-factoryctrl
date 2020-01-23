@@ -1,0 +1,6 @@
+{
+    "io_module_ip": "localhost",
+    "io_module_port": 502,
+    "red_bit_register": 20,
+    "green_bit_register": 19
+}
