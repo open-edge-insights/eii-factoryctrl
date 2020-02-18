@@ -1,0 +1,25 @@
+{
+  "definitions": {},
+  "type": "object",
+  "required": [
+    "io_module_ip",
+    "io_module_port",
+    "red_bit_register",
+    "green_bit_register"
+  ],
+  "properties": {
+    "io_module_ip": {
+      "type": "string",
+      "pattern": "^(.*)$"
+    },
+    "io_module_port": {
+      "type": "integer"
+    },
+    "red_bit_register": {
+      "type": "integer"
+    },
+    "green_bit_register": {
+      "type": "integer"
+    }
+  }
+}

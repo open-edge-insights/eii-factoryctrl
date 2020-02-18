@@ -26,6 +26,7 @@ import argparse
 import ast
 import json
 import os
+import sys
 import datetime
 import eis.msgbus as mb
 from eis.config_manager import ConfigManager
@@ -59,6 +60,11 @@ class FactoryControlApp:
         cfg = self.config_client.GetConfig("/{0}{1}"
                                            .format(self.app_name,
                                                    CONFIG_KEY_PATH))
+        # Validating config against schema
+        with open('./schema.json', "rb") as infile:
+            schema = infile.read()
+            if (Util.validate_json(schema, cfg)) is not True:
+                sys.exit(1)
         self.config = json.loads(cfg)
         self.ip = self.config["io_module_ip"]
         self.port = self.config["io_module_port"]
