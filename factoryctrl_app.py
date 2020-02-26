@@ -28,7 +28,7 @@ import json
 import os
 import datetime
 import eis.msgbus as mb
-from libs.ConfigManager import ConfigManager
+from eis.config_manager import ConfigManager
 from util.util import Util
 from util.msgbusutil import MsgBusUtil
 import queue
