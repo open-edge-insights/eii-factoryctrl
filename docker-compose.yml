@@ -21,6 +21,9 @@ services:
     environment:
       AppName: "FactoryControlApp"
       DEV_MODE: ${DEV_MODE}
+      no_proxy: ${eis_no_proxy},${ETCD_HOST}
+      ETCD_HOST: ${ETCD_HOST}
+      ETCD_PREFIX: ${ETCD_PREFIX}
 
       # MessageBus Endpoint Configuration
       CertType: "zmq"
