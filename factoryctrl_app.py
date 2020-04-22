@@ -31,7 +31,7 @@ import datetime
 import eis.msgbus as mb
 from eis.config_manager import ConfigManager
 from util.util import Util
-from util.msgbusutil import MsgBusUtil
+from eis.env_config import EnvConfig
 import queue
 
 CONFIG_KEY_PATH = "/config"
@@ -128,7 +128,7 @@ class FactoryControlApp:
 
             self.log.info("Subscribing on topic: {}".format(topics[0]))
             publisher, topic = topics[0].split("/")
-            msgbus_cfg = MsgBusUtil.get_messagebus_config(
+            msgbus_cfg = EnvConfig.get_messagebus_config(
                 topic, "sub", publisher, self.config_client, self.dev_mode)
             topic = topic.strip()
             mode_address = os.environ[topic + "_cfg"].split(",")
