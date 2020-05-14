@@ -1,6 +1,7 @@
 # Dockerfile for FactoryControlApp
 ARG EIS_VERSION
-FROM ia_eisbase:$EIS_VERSION as eisbase
+ARG DOCKER_REGISTRY
+FROM ${DOCKER_REGISTRY}ia_eisbase:$EIS_VERSION as eisbase
 LABEL description="FactoryControlApp image"
 ARG EIS_UID
 ARG EIS_USER_NAME
@@ -13,7 +14,7 @@ COPY requirements.txt .
 RUN pip3.6 install -r requirements.txt && \
     rm -rf requirements.txt
 
-FROM ia_common:$EIS_VERSION as common
+FROM ${DOCKER_REGISTRY}ia_common:$EIS_VERSION as common
 
 FROM eisbase
 
