@@ -18,21 +18,19 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from pymodbus.client.sync import ModbusTcpClient as ModbusClient
-from util.log import configure_logging, LOG_LEVELS
+"""This module controls the Alarm Light and Reset button.
+"""
+
 from distutils.util import strtobool
-import logging
-import argparse
-import ast
 import json
 import os
 import sys
-import datetime
 import eis.msgbus as mb
+from eis.env_config import EnvConfig
 from eis.config_manager import ConfigManager
 from util.util import Util
-from eis.env_config import EnvConfig
-import queue
+from util.log import configure_logging
+from pymodbus.client.sync import ModbusTcpClient as ModbusClient
 
 CONFIG_KEY_PATH = "/config"
 
@@ -40,7 +38,7 @@ CONFIG_KEY_PATH = "/config"
 class FactoryControlApp:
     '''This Class controls the AlarmLight'''
 
-    def __init__(self, dev_mode, config_client):
+    def __init__(self, dev_mode, config_client, log):
         ''' Reads the config file and connects
         to the io_module
 
@@ -49,14 +47,10 @@ class FactoryControlApp:
         :param config_client: distributed store config client
         :type config_client: config client object
         '''
-        self.log = logging.getLogger(__name__)
-        self.dev_mode = bool(strtobool(os.environ["DEV_MODE"]))
-
+        self.dev_mode = dev_mode
+        self.config_client = config_client
+        self.log = log
         self.app_name = os.environ.get("AppName")
-        conf = Util.get_crypto_dict(self.app_name)
-
-        cfg_mgr = ConfigManager()
-        self.config_client = cfg_mgr.get_config_client("etcd", conf)
         cfg = self.config_client.GetConfig("/{0}{1}"
                                            .format(self.app_name,
                                                    CONFIG_KEY_PATH))
@@ -66,10 +60,11 @@ class FactoryControlApp:
             if (Util.validate_json(schema, cfg)) is not True:
                 sys.exit(1)
         self.config = json.loads(cfg)
-        self.ip = self.config["io_module_ip"]
-        self.port = self.config["io_module_port"]
-        self.modbus_client = ModbusClient(
-            self.ip, self.port, timeout=1, retry_on_empty=True)
+        host = self.config["io_module_ip"]
+        port = self.config["io_module_port"]
+        self.ip_address = host + ":" + str(port)
+        self.modbus_client = ModbusClient(host, port, timeout=1,
+                                          retry_on_empty=True)
 
     def light_ctrl_cb(self, metadata):
         '''Controls the Alarm Light, i.e., alarm light turns on
@@ -96,8 +91,8 @@ class FactoryControlApp:
                         self.modbus_client.write_coil(
                             self.config["red_bit_register"], 1)
                         self.log.info("AlarmLight Triggered")
-                    except Exception as e:
-                        self.log.error(e, exc_info=True)
+                    except Exception as ex:
+                        self.log.error(ex, exc_info=True)
                 else:
                     self.modbus_client.write_coil(
                         self.config["red_bit_register"], 0)
@@ -116,17 +111,17 @@ class FactoryControlApp:
         '''
         subscriber = None
         try:
-            self.log.info("Modbus connecting on %s:%s" % (self.ip, self.port))
+            self.log.info("Modbus connecting on %s", self.ip_address)
             ret = self.modbus_client.connect()
             if not ret:
                 self.log.error("Modbus Connection failed")
-                exit(-1)
+                sys.exit(-1)
             self.log.info("Modbus connected")
             topics = os.environ.get("SubTopics").split(",")
             if len(topics) > 1:
                 raise Exception("Multiple SubTopics are not supported")
 
-            self.log.info("Subscribing on topic: {}".format(topics[0]))
+            self.log.info("Subscribing on topic: %s", topics[0])
             publisher, topic = topics[0].split("/")
             msgbus_cfg = EnvConfig.get_messagebus_config(
                 topic, "sub", publisher, self.config_client, self.dev_mode)
@@ -147,17 +142,16 @@ class FactoryControlApp:
                 self.light_ctrl_cb(metadata)
         except KeyboardInterrupt:
             self.log.error(' keyboard interrupt occurred Quitting...')
-        except Exception as e:
-            self.log.exception(e)
+        except Exception as ex:
+            self.log.exception(ex)
         finally:
             if subscriber is not None:
                 subscriber.close()
 
 
-if __name__ == "__main__":
-    currentDateTime = str(datetime.datetime.now())
-    listDateTime = currentDateTime.split(" ")
-    currentDateTime = "_".join(listDateTime)
+def main():
+    """Main method to FactoryControl App
+    """
 
     dev_mode = bool(strtobool(os.environ["DEV_MODE"]))
 
@@ -171,7 +165,11 @@ if __name__ == "__main__":
                             __name__, dev_mode)
     log.info("=============== STARTING factoryctrl_app ===============")
     try:
-        factoryCtrlApp = FactoryControlApp(dev_mode, config_client)
-        factoryCtrlApp.main()
-    except Exception as e:
-        log.exception(e)
+        factory_control_app = FactoryControlApp(dev_mode, config_client, log)
+        factory_control_app.main()
+    except Exception as ex:
+        log.exception(ex)
+
+
+if __name__ == "__main__":
+    main()
