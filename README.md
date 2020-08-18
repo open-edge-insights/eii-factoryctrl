@@ -1,4 +1,3 @@
-
 # FactoryControlApp:
 
 This module controls the Alarm Light and Reset button.
@@ -25,15 +24,4 @@ The config about Adamcontroller (IO module) like port, IP address, register bits
 
 ## `Installation`
 
-* Follow [provision/README.md](../README#provision-eis.md) for EIS provisioning
-  if not done already as part of EIS stack setup
-
-* Run FactoryControlApp
-
-  Present working directory to try out below commands is: `[repo]/FactoryControlApp`
-
-    1. Build and Run VideoIngestion as container
-        ```
-        $ cd [repo]/build
-        $ docker-compose up --build -d
-        ```
+* Follow steps 1-5 of main [EIS README](../README.md) if not done already as part of EIS stack setup
