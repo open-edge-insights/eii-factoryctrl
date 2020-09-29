@@ -26,12 +26,10 @@ import json
 import os
 import sys
 import eis.msgbus as mb
-from eis.env_config import EnvConfig
-from eis.config_manager import ConfigManager
 from util.util import Util
 from util.log import configure_logging
 from pymodbus.client.sync import ModbusTcpClient as ModbusClient
-
+import cfgmgr.config_manager as cfg
 CONFIG_KEY_PATH = "/config"
 
 
@@ -50,16 +48,14 @@ class FactoryControlApp:
         self.dev_mode = dev_mode
         self.config_client = config_client
         self.log = log
-        self.app_name = os.environ.get("AppName")
-        cfg = self.config_client.GetConfig("/{0}{1}"
-                                           .format(self.app_name,
-                                                   CONFIG_KEY_PATH))
-        # Validating config against schema
+        self.config = self.config_client.get_app_config()
+
+        #Validating config against schema
         with open('./schema.json', "rb") as infile:
             schema = infile.read()
-            if (Util.validate_json(schema, cfg)) is not True:
+            if (Util.validate_json(schema, json.dumps(self.config.get_dict()))) is not True:
                 sys.exit(1)
-        self.config = json.loads(cfg)
+
         host = self.config["io_module_ip"]
         port = self.config["io_module_port"]
         self.ip_address = host + ":" + str(port)
@@ -117,22 +113,14 @@ class FactoryControlApp:
                 self.log.error("Modbus Connection failed")
                 sys.exit(-1)
             self.log.info("Modbus connected")
-            topics = os.environ.get("SubTopics").split(",")
-            if len(topics) > 1:
+            sub_ctx = self.config_client.get_subscriber_by_index(0)
+            topic = sub_ctx.get_topics()
+            if len(topic) > 1:
                 raise Exception("Multiple SubTopics are not supported")
 
-            self.log.info("Subscribing on topic: %s", topics[0])
-            publisher, topic = topics[0].split("/")
-            msgbus_cfg = EnvConfig.get_messagebus_config(
-                topic, "sub", publisher, self.config_client, self.dev_mode)
-            topic = topic.strip()
-            mode_address = os.environ[topic + "_cfg"].split(",")
-            mode = mode_address[0].strip()
-            if (not self.dev_mode and mode == "zmq_tcp"):
-                for key in msgbus_cfg[topic]:
-                    if msgbus_cfg[topic][key] is None:
-                        raise ValueError("Invalid Config")
-
+            topic = topic[0]
+            self.log.info("Subscribing on topic: %s", topic)
+            msgbus_cfg = sub_ctx.get_msgbus_config()
             msgbus = mb.MsgbusContext(msgbus_cfg)
             subscriber = msgbus.new_subscriber(topic)
             while True:
@@ -152,15 +140,8 @@ class FactoryControlApp:
 def main():
     """Main method to FactoryControl App
     """
-
-    dev_mode = bool(strtobool(os.environ["DEV_MODE"]))
-
-    app_name = os.environ["AppName"]
-    conf = Util.get_crypto_dict(app_name)
-
-    cfg_mgr = ConfigManager()
-    config_client = cfg_mgr.get_config_client("etcd", conf)
-
+    config_client = cfg.ConfigMgr()
+    dev_mode = config_client.is_dev_mode()
     log = configure_logging(os.environ['PY_LOG_LEVEL'].upper(),
                             __name__, dev_mode)
     log.info("=============== STARTING factoryctrl_app ===============")
