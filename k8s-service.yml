@@ -73,12 +73,8 @@ spec:
           value: "/run/secrets/etcd_FactoryControlApp_cert/FactoryControlApp_client_certificate.pem"
         - name: CONFIGMGR_KEY
           value: "/run/secrets/etcd_FactoryControlApp_key/FactoryControlApp_client_key.pem"
-
-        # MessageBus Endpoint Configuration
-        - name: SubTopics
-          value: "VideoAnalytics/camera1_stream_results"
-        - name: camera1_stream_results_cfg
-          value: "zmq_tcp,videoanalytics:65013"
+        - name: SUBSCRIBER_ENDPOINT
+          value: "videoanalytics:65013"
 
       volumes:
       - name: eis-socket
