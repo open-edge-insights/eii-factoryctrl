@@ -49,4 +49,6 @@ COPY --from=common /usr/local/lib/python3.6/dist-packages/ /usr/local/lib/python
 COPY factoryctrl_app.py .
 COPY schema.json .
 
+HEALTHCHECK NONE
+
 ENTRYPOINT [ "python3.6", "factoryctrl_app.py" ]
