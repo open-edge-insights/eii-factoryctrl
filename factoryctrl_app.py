@@ -50,10 +50,11 @@ class FactoryControlApp:
         self.log = log
         self.config = self.config_client.get_app_config()
 
-        #Validating config against schema
+        # Validating config against schema
         with open('./schema.json', "rb") as infile:
             schema = infile.read()
-            if (Util.validate_json(schema, json.dumps(self.config.get_dict()))) is not True:
+            if not (Util.validate_json(schema,
+                                       json.dumps(self.config.get_dict()))):
                 sys.exit(1)
 
         host = self.config["io_module_ip"]
