@@ -24,4 +24,4 @@ The config about Adamcontroller (IO module) like port, IP address, register bits
 
 ## `Installation`
 
-* Follow steps 1-5 of main [EIS README](../README.md) if not done already as part of EIS stack setup
+* Follow steps 1-5 of main [EII README](../README.md) if not done already as part of EII stack setup
