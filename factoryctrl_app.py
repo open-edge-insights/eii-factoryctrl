@@ -25,7 +25,7 @@ from distutils.util import strtobool
 import json
 import os
 import sys
-import eis.msgbus as mb
+import eii.msgbus as mb
 from util.util import Util
 from util.log import configure_logging
 from pymodbus.client.sync import ModbusTcpClient as ModbusClient
