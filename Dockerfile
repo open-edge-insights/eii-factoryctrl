@@ -20,13 +20,13 @@
 
 # Dockerfile for FactoryControlApp
 
-ARG EIS_VERSION
+ARG EII_VERSION
 ARG DOCKER_REGISTRY
-FROM ${DOCKER_REGISTRY}ia_eisbase:$EIS_VERSION as eisbase
+FROM ${DOCKER_REGISTRY}ia_eiibase:$EII_VERSION as eiibase
 LABEL description="FactoryControlApp image"
-ARG EIS_UID
-ARG EIS_USER_NAME
-RUN useradd -r -u ${EIS_UID} ${EIS_USER_NAME}
+ARG EII_UID
+ARG EII_USER_NAME
+RUN useradd -r -u ${EII_UID} ${EII_USER_NAME}
 
 ENV PYTHONPATH ${PYTHONPATH}:.
 
@@ -35,9 +35,9 @@ COPY requirements.txt .
 RUN pip3.6 install -r requirements.txt && \
     rm -rf requirements.txt
 
-FROM ${DOCKER_REGISTRY}ia_common:$EIS_VERSION as common
+FROM ${DOCKER_REGISTRY}ia_common:$EII_VERSION as common
 
-FROM eisbase
+FROM eiibase
 
 COPY --from=common ${GO_WORK_DIR}/common/libs ${PY_WORK_DIR}/libs
 COPY --from=common ${GO_WORK_DIR}/common/util ${PY_WORK_DIR}/util
