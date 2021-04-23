@@ -57,7 +57,6 @@ services:
       CertType: "zmq"
     volumes:
       - "vol_eii_socket:${SOCKET_DIR}"
-    user: ${EII_UID}
     secrets:
       - ca_etcd
       - etcd_FactoryControlApp_cert
