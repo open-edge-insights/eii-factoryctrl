@@ -24,4 +24,6 @@ The config about Adamcontroller (IO module) like port, IP address, register bits
 
 ## `Installation`
 
+* Update "io_module_ip" key with host ip address in the [config](config.json) file.
+
 * Follow steps 1-5 of main [EII README](../README.md) if not done already as part of EII stack setup

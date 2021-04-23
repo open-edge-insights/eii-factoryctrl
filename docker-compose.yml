@@ -39,7 +39,6 @@ services:
     image: ${DOCKER_REGISTRY}ia_factoryctrl_app:${EII_VERSION}
     container_name: ia_factoryctrl_app
     hostname: ia_factoryctrl_app
-    network_mode: host
     restart: unless-stopped
     ipc: "none"
     security_opt:
@@ -50,11 +49,13 @@ services:
     environment:
       AppName: "FactoryControlApp"
       DEV_MODE: ${DEV_MODE}
-      no_proxy: ${eii_no_proxy},${ETCD_HOST}
+      no_proxy: ${ETCD_HOST}
       ETCD_HOST: ${ETCD_HOST}
       ETCD_CLIENT_PORT: ${ETCD_CLIENT_PORT}
       ETCD_PREFIX: ${ETCD_PREFIX}
       CertType: "zmq"
+    networks:
+      - eii
     volumes:
       - "vol_eii_socket:${SOCKET_DIR}"
     secrets:
