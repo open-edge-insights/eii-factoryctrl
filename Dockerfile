@@ -45,13 +45,9 @@ RUN mv schema.json $ARTIFACTS && \
 
 FROM ubuntu:$UBUNTU_IMAGE_VERSION as runtime
 
-# Setting python dev env
+# Setting python env
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends software-properties-common && \
-    add-apt-repository ppa:deadsnakes/ppa && \
-    apt-get update && \
-    apt-get install -y --no-install-recommends python3-distutils && \
-    rm -rf /var/lib/apt/lists/*
+    apt-get install -y --no-install-recommends python3-distutils python3-minimal
 
 WORKDIR /app
 
