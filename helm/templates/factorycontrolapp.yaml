@@ -44,6 +44,10 @@ spec:
         securityContext:
           privileged: true
         volumeMounts:
+        {{- if eq .Values.config.factorycontrolapp.IPC true}}
+        - name: {{ .Values.volumes.eii_socket.name }}
+          mountPath: {{ .Values.volumes.eii_socket.location }}
+        {{- end }}
         {{ if eq .Values.env.dev_mode false}}
         - name: etcd-certs
           mountPath: /run/secrets/etcd/
@@ -60,11 +64,18 @@ spec:
           value: '{{ .Values.config.etcd.client_port }}'
         - name:  ETCD_PREFIX
           value: ''
+        {{- if eq .Values.config.factorycontrolapp.IPC false}}
         {{- if .Values.config.video_analytics }}
         - name: SUBSCRIBER_ENDPOINT
           value: "{{ .Values.config.video_analytics.name }}:{{ .Values.config.video_analytics.publish_port }}"
         - name: SUBSCRIBER_TYPE
           value: "zmq_tcp"
+        {{- end }}
+        {{- else }}
+        - name: SUBSCRIBER_ENDPOINT
+          value: "{{ .Values.env.SOCKET_DIR }}"
+        - name: SUBSCRIBER_TYPE
+          value: "zmq_ipc"
         {{- end }}
         {{ if eq .Values.env.dev_mode false}}
         - name: CONFIGMGR_CACERT
@@ -76,6 +87,11 @@ spec:
         {{ end }}
 
       volumes:
+      {{- if eq .Values.config.factorycontrolapp.IPC true}}
+      - name: {{ .Values.volumes.eii_socket.name }}
+        persistentVolumeClaim:
+          claimName: {{ .Values.volumes.eii_socket.name }}
+      {{- end }}
       {{ if eq .Values.env.dev_mode false}}
       - name: etcd-certs
         secret:

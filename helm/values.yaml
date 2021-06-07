@@ -1,3 +1,5 @@
 config:
     factorycontrolapp:
       name: factorycontrolapp
+      IPC: false
+
