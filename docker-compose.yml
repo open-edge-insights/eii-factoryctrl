@@ -32,11 +32,10 @@ services:
         EII_VERSION: ${EII_VERSION}
         EII_UID: ${EII_UID}
         EII_USER_NAME: ${EII_USER_NAME}
-        DOCKER_REGISTRY: ${DOCKER_REGISTRY}
         UBUNTU_IMAGE_VERSION: ${UBUNTU_IMAGE_VERSION}
         CMAKE_INSTALL_PREFIX: ${EII_INSTALL_PATH}
     read_only: true
-    image: ${DOCKER_REGISTRY}ia_factoryctrl_app:${EII_VERSION}
+    image: ${DOCKER_REGISTRY}openedgeinsights/ia_factoryctrl_app:${EII_VERSION}
     container_name: ia_factoryctrl_app
     hostname: ia_factoryctrl_app
     restart: unless-stopped
