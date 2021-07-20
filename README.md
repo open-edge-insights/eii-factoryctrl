@@ -1,3 +1,9 @@
+**Contents**
+
+- [FactoryControlApp:](#factorycontrolapp)
+  - [`Pre-requisites`](#pre-requisites)
+  - [`Service bring up`](#service-bring-up)
+
 # FactoryControlApp:
 
 This module controls the Alarm Light and Reset button.
@@ -22,8 +28,13 @@ The config about Adamcontroller (IO module) like port, IP address, register bits
    > **NOTE**: For the circuit connections of the lab > setup, refer 4.5 (4.5.2 IO module) in the
    > document [HW_Configuration.pdf](HW_Configuration)
 
-## `Installation`
+## `Service bring up`
 
 * Update "io_module_ip" key with host ip address in the [config](config.json) file.
 
-* Follow steps 1-5 of main [EII README](../README.md) if not done already as part of EII stack setup
+* Please go through the below sections to have visualizer service built
+  and launch it:
+  - [../README.md#generate-deployment-and-configuration-files](../README.md#generate-deployment-and-configuration-files)
+  - [../README.md#provision](../README.md#provision)
+  - [../README.md#build-and-run-eii-videotimeseries-use-cases](../README.md#build-and-run-eii-videotimeseries-use-cases)
+
