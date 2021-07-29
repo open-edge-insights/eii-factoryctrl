@@ -26,7 +26,7 @@ The config about Adamcontroller (IO module) like port, IP address, register bits
 
 
    > **NOTE**: For the circuit connections of the lab > setup, refer 4.5 (4.5.2 IO module) in the
-   > document [HW_Configuration.pdf](HW_Configuration)
+   > document [HW_Configuration.pdf](HW_Configuration.pdf)
 
 ## `Service bring up`
 
@@ -34,7 +34,7 @@ The config about Adamcontroller (IO module) like port, IP address, register bits
 
 * Please go through the below sections to have visualizer service built
   and launch it:
-  - [../README.md#generate-deployment-and-configuration-files](../README.md#generate-deployment-and-configuration-files)
-  - [../README.md#provision](../README.md#provision)
-  - [../README.md#build-and-run-eii-videotimeseries-use-cases](../README.md#build-and-run-eii-videotimeseries-use-cases)
+  - [../README.md#generate-deployment-and-configuration-files](https://github.com/open-edge-insights/eii-core/blob/master/README.md#generate-deployment-and-configuration-files)
+  - [../README.md#provision](https://github.com/open-edge-insights/eii-core/blob/master/README.md#provision)
+  - [../README.md#build-and-run-eii-videotimeseries-use-cases](https://github.com/open-edge-insights/eii-core/blob/master/README.md#build-and-run-eii-videotimeseries-use-cases)
 
