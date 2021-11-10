@@ -24,10 +24,6 @@ The config about Adamcontroller (IO module) like port, IP address, register bits
     a. On the left-hand side pannel, right click on `Ethernet` and select `Search Device`<br>
     b. io_module will be detected (ADAM-6050) under Ethernet, click on it and go to `Network` tab and set the `<ip_address>` to the io_module.<br>
 
-
-   > **NOTE**: For the circuit connections of the lab > setup, refer 4.5 (4.5.2 IO module) in the
-   > document [HW_Configuration.pdf](HW_Configuration.pdf)
-
 ## `Service bring up`
 
 * Update "io_module_ip" key with host ip address in the [config](config.json) file.
