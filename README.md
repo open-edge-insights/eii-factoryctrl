@@ -1,10 +1,10 @@
 **Contents**
 
 - [FactoryControlApp:](#factorycontrolapp)
-  - [`Pre-requisites`](#pre-requisites)
-  - [`Service bring up`](#service-bring-up)
+  - [Pre-requisites](#pre-requisites)
+  - [Service bring up](#service-bring-up)
 
-# FactoryControlApp:
+# FactoryControlApp
 
 This module controls the Alarm Light and Reset button.
 The Output of VA (Video Analytics) i.e. the classified results data (MetaData, Frame) is published on a topic (which is mentioned in the docker compose.yml file in VA section) & the Factory control app subscribes to this topic (again sub topic mentioned in compose file of factory control app section). This meta data is parsed by the FCA & is used to determine if the frame is Defective or a proper one & glow the Red or green light in the IO module (Adam controller) respectively.
@@ -15,7 +15,7 @@ The config about Adamcontroller (IO module) like port, IP address, register bits
 ## `Pre-requisites`
 
 1. Configure io_module using a tool **AdamApax.Net Utility V2.05.11 B19.msi**. This can be downloaded from [here]
-   (https://support.advantech.com/support/DownloadSRDetail_New.aspx?SR_ID=1-2AKUDB&Doc_Source=Download) by selecting **Primary** Download Site with the **AdamApax.Net Utility V2.05.11 B19.msi**.
+   (<https://support.advantech.com/support/DownloadSRDetail_New.aspx?SR_ID=1-2AKUDB&Doc_Source=Download>) by selecting **Primary** Download Site with the **AdamApax.Net Utility V2.05.11 B19.msi**.
 
     **Note**: System from which io_module is configures and io_module both should be in same subnet.
     During the next step, if password prompt is asked then the password is "00000000"
@@ -24,17 +24,15 @@ The config about Adamcontroller (IO module) like port, IP address, register bits
     a. On the left-hand side pannel, right click on `Ethernet` and select `Search Device`<br>
     b. io_module will be detected (ADAM-6050) under Ethernet, click on it and go to `Network` tab and set the `<ip_address>` to the io_module.<br>
 
-
    > **NOTE**: For the circuit connections of the lab > setup, refer 4.5 (4.5.2 IO module) in the
    > document [HW_Configuration.pdf](HW_Configuration.pdf)
 
 ## `Service bring up`
 
-* Update "io_module_ip" key with host ip address in the [config](config.json) file.
+- Update "io_module_ip" key with host ip address in the [config](config.json) file.
 
-* Please go through the below sections to have visualizer service built
+- Please go through the below sections to have visualizer service built
   and launch it:
   - [../README.md#generate-deployment-and-configuration-files](https://github.com/open-edge-insights/eii-core/blob/master/README.md#generate-deployment-and-configuration-files)
   - [../README.md#provision](https://github.com/open-edge-insights/eii-core/blob/master/README.md#provision)
   - [../README.md#build-and-run-eii-videotimeseries-use-cases](https://github.com/open-edge-insights/eii-core/blob/master/README.md#build-and-run-eii-videotimeseries-use-cases)
-
