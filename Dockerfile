@@ -47,7 +47,7 @@ FROM ubuntu:$UBUNTU_IMAGE_VERSION as runtime
 # Setting python env
 RUN apt-get update && \
     apt-get install -y --no-install-recommends python3-distutils python3-minimal \
-                       libcjson1 libzmq5
+                       libcjson1 libzmq5 zlib1g
 
 WORKDIR /app
 
