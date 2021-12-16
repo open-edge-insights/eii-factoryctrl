@@ -1,5 +1,6 @@
 {
     "config": {
+	"cert_type": ["zmq"],
         "io_module_ip": "< host ip>",
         "io_module_port": 502,
         "red_bit_register": 20,
