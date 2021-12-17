@@ -56,5 +56,5 @@ services:
       - eii
     volumes:
       - "vol_eii_socket:${SOCKET_DIR}"
-      - ./Certificates/FactoryControlApp:/Certificates/FactoryControlApp
-      - ./Certificates/rootca:/Certificates/rootca
+      - ./Certificates/FactoryControlApp:/run/secrets/FactoryControlApp
+      - ./Certificates/rootca:/run/secrets/rootca
