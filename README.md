@@ -17,19 +17,16 @@ The config about Adamcontroller (IO module) like port, IP address, register bits
 1. Configure io_module using a tool **AdamApax.Net Utility V2.05.11 B19.msi**. This can be downloaded from [here]
    (<https://support.advantech.com/support/DownloadSRDetail_New.aspx?SR_ID=1-2AKUDB&Doc_Source=Download>) by selecting **Primary** Download Site with the **AdamApax.Net Utility V2.05.11 B19.msi**.
 
-    **Note**: System from which io_module is configures and io_module both should be in same subnet.
+    **Note**: System from which io_module is configured and IO module both should be in same subnet.
     During the next step, if password prompt is asked then the password is "00000000"
 
 2. Install and open the downloaded app and follow the below instructions:<br>
     a. On the left-hand side pannel, right click on `Ethernet` and select `Search Device`<br>
     b. io_module will be detected (ADAM-6050) under Ethernet, click on it and go to `Network` tab and set the `<ip_address>` to the io_module.<br>
 
-   > **NOTE**: For the circuit connections of the lab > setup, refer 4.5 (4.5.2 IO module) in the
-   > document [HW_Configuration.pdf](HW_Configuration.pdf)
-
 ## `Service bring up`
 
-- Update "io_module_ip" key with host ip address in the [config](config.json) file.
+- Update "io_module_ip" key with IO Module IP address in the [config](config.json) file.
 
 - Please go through the below sections to have visualizer service built
   and launch it:
